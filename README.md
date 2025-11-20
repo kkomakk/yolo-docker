@@ -1,78 +1,73 @@
-# YOLO Docker 환경 구성 및 객체 검출 과제
+YOLO Docker 환경 구축 및 실행 과제
+📌 1. GitHub Repository
 
-이 저장소는 객체 검출(Object Detection) 과제 수행을 위해  
-YOLOv3 + Darknet 환경을 Docker 기반으로 구성한 프로젝트입니다.
+👉 https://github.com/kkomakk/yolo-docker
 
----
+📌 2. Docker Hub Image
 
-## 📌 1. 프로젝트 개요
-- 제공된 Darknet 프레임워크를 Docker 이미지로 빌드
-- Ubuntu 22.04 기반
-- OpenCV 포함
-- GPU 비사용(GPU=0), CPU 전용 환경
-- YOLOv3 weights(yolov3.weights)를 포함하여 컨테이너 내에서 즉시 객체 검출 가능
+👉 https://hub.docker.com/r/easywater/yolo
 
----
+📌 3. 과제 수행에서 얻은 경험 & 노하우
 
-## 📌 2. Docker Image 정보
-- Docker Hub: **https://hub.docker.com/r/easywater/yolo**
-- Image name: `easywater/yolo:latest`
-- Size: 약 680MB
+본 과제에서는 Docker 환경에서 YOLOv3를 실행하기 위해 Ubuntu 이미지를 기반으로 Darknet을 빌드하고, 컨테이너 내에서 실제 이미지 인퍼런스를 수행하였다. 이 과정을 통해 아래와 같은 경험을 얻었다.
 
-### 📌 이미지 Pull
-docker pull easywater/yolo:latest
+🔹 1) Dockerfile 구조와 이미지 빌드 과정 이해
 
----
+FROM, RUN, WORKDIR, COPY, CMD 등 Dockerfile의 핵심 명령어들을 직접 사용해보면서 Docker 이미지가 어떻게 구성되는지 이해할 수 있었다.
 
-## 📌 3. Docker 컨테이너 실행 방법
+빌드 과정 중 OpenCV 의존성 문제나 Makefile 수정 등 실제 빌드 환경에서 자주 발생하는 문제들을 해결하며 실전 감각을 얻었다.
 
-실행 후 `/app` 디렉토리에 Darknet이 위치합니다.
+🔹 2) 컨테이너 내부에서의 YOLO 실행
 
----
+docker run -it <image> /bin/bash 형태로 컨테이너 내부에 접속해 YOLO를 실행하는 과정을 직접 경험했다.
 
-## 📌 4. 객체 검출 실행 방법
+컨테이너 안에서 ./darknet detect ... 명령으로 추론을 성공적으로 수행하고, 생성된 predictions.jpg를 docker cp로 호스트로 가져올 수 있었다.
 
-### ▶ test.jpg에 YOLOv3 적용
-컨테이너 내부에서:
-cd /app
-./darknet detect cfg/yolov3.cfg yolov3.weights test.jpg
+🔹 3) Docker Hub 배포 경험
 
+빌드한 이미지를 docker push로 Docker Hub에 업로드하여 누구나 pull해서 사용할 수 있는 형태로 제공할 수 있었다.
 
-검출 결과는 `predictions.jpg`로 저장됩니다.
+개인 개발 환경 뿐 아니라 다른 환경에서도 재현 가능한 구조를 만드는 것이 Docker의 핵심 장점임을 체감했다.
 
----
+📌 4. Reference (참고 자료)
+🔗 공식자료
 
-## 📌 5. 결과 파일
-- 객체 검출 결과 이미지: **predictions.jpg**
-- Dockerfile
-- detect.sh (과제 편의를 위해 작성)
-- Darknet 및 yolov3.cfg, weights 내장
+Darknet YOLOv3 Repository
+👉 https://github.com/pjreddie/darknet
 
----
+AlexeyAB Darknet Repository
+👉 https://github.com/AlexeyAB/darknet
 
-## 📌 6. 파일 구조
-yolo-docker/
-├── Dockerfile
-├── detect.sh
-└── (기타 Darknet 자동 다운로드 및 빌드)
+Docker Documentation
+👉 https://docs.docker.com/
 
+🔗 참고한 GitHub 리포지토리
 
----
+kkomakk/yolo-docker
+👉 https://github.com/kkomakk/yolo-docker
 
-## 📌 7. 과제 설명
-본 프로젝트는 다음 요구사항을 만족합니다:
+🔗 참고한 게시글 / 사이트
 
-1) Dockerfile 작성  
-2) YOLOv3 + Darknet 환경 빌드  
-3) Docker Hub 업로드  
-4) GitHub 업로드  
-5) 이미지 검출 결과 첨부(predictions.jpg)
+Dockerfile 작성 참고: 여러 StackOverflow 및 GitHub Issue 스레드
 
----
+OpenCV 설치 관련 ubuntu repository docs
 
-## 📌 8. 제작자
-- 이름: 이지수
-- Email: j2031414@gmail.com
-- Docker Hub: https://hub.docker.com/r/easywater/yolo  
-- GitHub: https://github.com/kkomakk/yolo-docker
+📌 5. GenAI 사용 내역
 
+본 과제를 수행하는 과정에서 아래와 같이 GenAI 서비스를 사용함.
+
+사용한 서비스: ChatGPT (OpenAI GPT-5.1)
+
+사용 목적:
+
+Dockerfile 수정 및 error handling
+
+OpenCV / Makefile 관련 문제 해결
+
+Darknet 실행 중 발생한 오류 분석
+
+Docker Hub / GitHub 업로드 과정 가이드
+
+문서 정리 및 README.md 작성 지원
+
+모든 코드는 직접 실행 및 검증 후 제출하였으며, GenAI는 참고 및 문제 해결 가이드로만 활용함.
